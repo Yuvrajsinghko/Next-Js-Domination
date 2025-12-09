@@ -1,5 +1,8 @@
-export default function ProductDetails({params}:{
-    params:Promise<{productId:string}>
+export default async function ProductDetails({
+  params,
+}: {
+  params: Promise<{ productId: string }>;
 }) {
-  return <h1>product details</h1>;
+  const productId = (await params).productId;
+  return <h1>product details{productId}</h1>;
 }
