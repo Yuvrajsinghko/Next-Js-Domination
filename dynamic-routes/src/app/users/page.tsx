@@ -1,8 +1,9 @@
 import React from 'react'
 
-const Users = () => {
+const Users = async ({params}:{params:{userid:string}}) => {
+  const {userid} =await params;
   return (
-    <div>Main Users</div>
+    <div>Main Users id no:{userid}</div>
   )
 }
 
