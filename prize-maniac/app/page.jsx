@@ -1,10 +1,17 @@
+import AuthButton from "@/components/AuthButton";
+import AddProductForm from "@/components/AddProductForm";
 import { Button } from "@/components/ui/button";
-import { Bell, LogIn, Rabbit, Shield } from "lucide-react";
+import { createClient } from "@/utils/supabase/server";
+import { Bell, LogIn, Rabbit, Shield, TrendingDown } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 
-const Home = () => {
-  const user = null;
+const Home = async () => {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const products = [];
 
@@ -29,7 +36,7 @@ const Home = () => {
   ];
   return (
     <main className="min-h-screen bg-linear-to-br from-orange-50 via-white to-orange-50">
-      <header className="bg-red-100 backdrop-blur-sm border-b border-grey-200 sticky top-0 z-10">
+      <header className="bg-white/50 backdrop-blur-3xl border-b border-grey-200 sticky top-0 z-10">
         <div className="max-w-8xl mx-auto px-25 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <Image
@@ -41,14 +48,7 @@ const Home = () => {
             />
           </div>
           {/* Auth Button */}
-          <Button
-            variant="default"
-            size="sm"
-            className="bg-amber-600 hover:bg-amber-700 gap-2"
-          >
-            <LogIn className="w-4 h-4" />
-            Sign In
-          </Button>
+          <AuthButton user={user} />
         </div>
       </header>
       <section className="py-20 px-4">
@@ -65,7 +65,7 @@ const Home = () => {
             prices drop. Save money effortlessly.
           </p>
           {/* Add Product Form */}
-
+          <AddProductForm />
           {/* Features */}
           {products.length == 0 && (
             <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-16">
@@ -85,6 +85,19 @@ const Home = () => {
           )}
         </div>
       </section>
+      {user && products.length === 0 && (
+        <section className="max-w-2xl mx-auto px-4 pb-20 text-center">
+          <div className="bg-white rounded-xl border-2 border-dashed border-gray-300 p-12">
+            <TrendingDown className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              No products yet
+            </h3>
+            <p className="text-gray-600">
+              Add your first product above to start tracking prices!
+            </p>
+          </div>
+        </section>
+      )}
     </main>
   );
 };
