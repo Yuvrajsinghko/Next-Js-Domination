@@ -1,23 +1,35 @@
 "use client";
 
-import React, { useState } from "react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { addProduct } from "@/app/actions";
 import { AuthModal } from "./AuthModal";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { createClient } from "@/utils/supabase/client";
 
-const AddProductForm = ({ user }) => {
+export default function AddProductForm({ user: serverUser }) {
+  const supabase = createClient();
+  const [user, setUser] = useState(serverUser ?? null);
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-
+  useEffect(() => {
+    async function loadUser() {
+      const { data } = await supabase.auth.getUser();
+      if (data?.user) setUser(data.user);
+    }
+    loadUser();
+  }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!user) {
       setShowAuthModal(true);
       return;
     }
+
     setLoading(true);
 
     const formData = new FormData();
@@ -34,6 +46,7 @@ const AddProductForm = ({ user }) => {
 
     setLoading(false);
   };
+
   return (
     <>
       <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
@@ -47,6 +60,7 @@ const AddProductForm = ({ user }) => {
             required
             disabled={loading}
           />
+
           <Button
             type="submit"
             disabled={loading}
@@ -64,13 +78,11 @@ const AddProductForm = ({ user }) => {
           </Button>
         </div>
       </form>
-      {/* Auth Modal */}
+
       <AuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
       />
     </>
   );
-};
-
-export default AddProductForm;
+}

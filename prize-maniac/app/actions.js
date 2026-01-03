@@ -1,16 +1,9 @@
 "use server";
 
-import { scrapeProduct } from "@/lib/firecrawl";
 import { createClient } from "@/utils/supabase/server";
+import { scrapeProduct } from "@/lib/firecrawl";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-
-export async function signOut() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
-  revalidatePath("/");
-  redirect("/");
-}
 
 export async function addProduct(formData) {
   const url = formData.get("url");
@@ -149,9 +142,9 @@ export async function getPriceHistory(productId) {
   }
 }
 
-// export async function signOut() {
-//   const supabase = await createClient();
-//   await supabase.auth.signOut();
-//   revalidatePath("/");
-//   redirect("/");
-// }
+export async function signOut() {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  revalidatePath("/");
+  redirect("/");
+}
